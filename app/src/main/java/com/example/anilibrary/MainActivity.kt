@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.anilibrary.navigation.NavGraph
 import com.example.anilibrary.ui.theme.AniLibraryTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AniLibraryTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                 NavGraph(innerPadding)
                 }
             }
         }

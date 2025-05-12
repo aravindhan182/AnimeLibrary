@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.androidx.runtime.livedata.compose)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.compose.navigation)
 }
