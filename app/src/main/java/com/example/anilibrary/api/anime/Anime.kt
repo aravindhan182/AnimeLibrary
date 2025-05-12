@@ -3,6 +3,8 @@ package com.example.anilibrary.api.anime
 import com.google.gson.annotations.SerializedName
 
 data class Anime(
+    @SerializedName("mal_id")
+    val animeId: Int,
     @SerializedName("title")
     val title: String,
     @SerializedName("episodes")

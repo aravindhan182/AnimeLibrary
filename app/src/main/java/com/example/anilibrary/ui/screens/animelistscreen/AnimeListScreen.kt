@@ -1,6 +1,7 @@
 package com.example.anilibrary.ui.screens.animelistscreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.example.anilibrary.api.anime.Anime
+import com.example.anilibrary.navigation.Screen
 
 @Composable
 fun AnimeScreen(
@@ -50,7 +52,9 @@ fun AnimeScreen(
         items(count = animeList.itemCount) { index ->
             val anime = animeList[index]
             anime?.let {
-                ShowCard(anime = it)
+                ShowCard(anime = it, onClick = {
+                    navController.navigate(Screen.AnimeDetailScreen.createRoute(it.animeId))
+                })
                 Spacer(modifier = Modifier.height(12.dp))
             }
         }
@@ -83,10 +87,11 @@ fun AnimeScreen(
 }
 
 @Composable
-fun ShowCard(anime: Anime) {
+fun ShowCard(anime: Anime, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
