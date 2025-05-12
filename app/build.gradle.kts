@@ -72,4 +72,6 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.compose.navigation)
     implementation(libs.compose.coil)
+    implementation(libs.androidx.paging)
+    implementation(libs.androidx.paging.compose)
 }

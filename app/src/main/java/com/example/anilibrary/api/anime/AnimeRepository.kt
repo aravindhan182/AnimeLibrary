@@ -1,9 +1,14 @@
 package com.example.anilibrary.api.anime
 
-import retrofit2.Response
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import com.example.anilibrary.pagination.AnimePagingSource
 
-class AnimeRepository {
-    suspend fun getAnimeList(): Response<List<Anime>> {
-        return AnimeService.api.getAnimeList()
+class AnimeRepository(private val apiService: AnimeService) {
+    fun getAnimePagingFlow(): Pager<Int, Anime> {
+        return Pager(
+            config = PagingConfig(pageSize = 25),
+            pagingSourceFactory = { AnimePagingSource(apiService) }
+        )
     }
 }
