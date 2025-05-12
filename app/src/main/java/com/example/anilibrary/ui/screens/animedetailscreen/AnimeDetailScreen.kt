@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
 @Composable
-fun AnimeDetailsScreen(navController: NavController, paddingValues: PaddingValues) {
+fun AnimeDetailsScreen(navController: NavController, paddingValues: PaddingValues, animeId: Int) {
 
 }
