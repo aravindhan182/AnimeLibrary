@@ -1,32 +1,46 @@
 package com.example.anilibrary.api.animedetails
 
+import com.example.anilibrary.api.anime.Image
+import com.google.gson.annotations.SerializedName
+
+data class AnimeResponse(
+    val data: AnimeDetails
+)
+
 data class AnimeDetails(
-    val trailerUrl: String,
-    val images: List<Jpg>,
+    @SerializedName("trailer")
+    val trailerUrl: Trailer,
+    @SerializedName("title")
     val title: String,
+    @SerializedName("synopsis")
     val synopsis: String,
+    @SerializedName("genres")
     val genres: List<Genres>,
-    val broadCast: BroadCast,
+    @SerializedName("episodes")
     val numberOfEpisodes: Int,
-    val rating: Double,
+    @SerializedName("rating")
+    val rating: String,
 )
 
-data class Jpg(
-    val imageUrl: String,
-    val smallImageUrl: String,
-    val largeImageUrl: String
+data class Trailer(
+    @SerializedName("youtube_id")
+    val youtubeId: String,
+    @SerializedName("url")
+    val url: String,
+    @SerializedName("embed_url")
+    val embedUrl: String,
+    @SerializedName("images")
+    val images: Image
 )
 
-data class BroadCast(
-    val day: String,
-    val time: String,
-    val timezone: String,
-    val string: String,
-)
 
 data class Genres(
-    val mal_id: Int,
+    @SerializedName("mal_id")
+    val animeId: Int,
+    @SerializedName("type")
     val type: String,
+    @SerializedName("name")
     val name: String,
+    @SerializedName("url")
     val url: String
 )

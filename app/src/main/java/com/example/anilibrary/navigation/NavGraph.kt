@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.anilibrary.ui.screens.animedetailscreen.AnimeDetailsScreen
+import com.example.anilibrary.ui.screens.animedetailscreen.AnimeDetailsViewModel
 import com.example.anilibrary.ui.screens.animelistscreen.AnimeListViewModel
 import com.example.anilibrary.ui.screens.animelistscreen.AnimeScreen
 
@@ -16,6 +17,7 @@ import com.example.anilibrary.ui.screens.animelistscreen.AnimeScreen
 fun NavGraph(paddingValues: PaddingValues) {
     val navController = rememberNavController()
     val animeListViewModel: AnimeListViewModel = viewModel()
+    val animeDetailsViewModel: AnimeDetailsViewModel = viewModel()
     NavHost(navController = navController, startDestination = Screen.AnimeScreen.route) {
         composable(route = Screen.AnimeScreen.route) {
             AnimeScreen(
@@ -29,7 +31,12 @@ fun NavGraph(paddingValues: PaddingValues) {
             arguments = listOf(navArgument("animeId") { type = NavType.IntType })
         ) { backStackEntry ->
             val animeId = backStackEntry.arguments?.getInt("animeId") ?: -1
-            AnimeDetailsScreen(navController = navController, paddingValues = paddingValues, animeId = animeId)
+            AnimeDetailsScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                animeId = animeId,
+                viewModel = animeDetailsViewModel
+            )
         }
     }
 }
