@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -56,6 +57,15 @@ fun AnimeDetailsScreen(
         viewModel.getAnimalDetails(animeId)
     }
     val result by viewModel.animeDetails.observeAsState()
+    val hasLoading = viewModel.loading.observeAsState().value ?: false
+    if (hasLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
 
     when (result) {
         is Result.Success -> {

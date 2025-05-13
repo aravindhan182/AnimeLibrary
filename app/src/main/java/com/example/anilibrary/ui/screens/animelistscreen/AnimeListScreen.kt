@@ -44,47 +44,50 @@ fun AnimeScreen(
 ) {
     val animeList = viewModel.animePagingData.collectAsLazyPagingItems()
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-    ) {
-        items(count = animeList.itemCount) { index ->
-            val anime = animeList[index]
-            anime?.let {
-                ShowCard(anime = it, onClick = {
-                    navController.navigate(Screen.AnimeDetailScreen.createRoute(it.animeId))
-                })
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
+    val isRefreshing = animeList.loadState.refresh is LoadState.Loading
 
-        animeList.apply {
-            when {
-                loadState.refresh is LoadState.Loading -> {
-                    item {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (!isRefreshing) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                items(count = animeList.itemCount) { index ->
+                    val anime = animeList[index]
+                    anime?.let {
+                        ShowCard(anime = it, onClick = {
+                            navController.navigate(Screen.AnimeDetailScreen.createRoute(it.animeId))
+                        })
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+
+                animeList.apply {
+                    when {
+                        loadState.refresh is LoadState.Error -> {
+                            val e = animeList.loadState.refresh as LoadState.Error
+                            item {
+                                Text("Error: ${e.error.message}")
+                            }
                         }
                     }
                 }
-
-                loadState.append is LoadState.Loading -> {
-                    item {
-                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-                    }
-                }
-
-                loadState.refresh is LoadState.Error -> {
-                    val e = animeList.loadState.refresh as LoadState.Error
-                    item {
-                        Text("Error: ${e.error.message}")
-                    }
-                }
+            }
+        }
+        if (isRefreshing) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
 }
+
 
 @Composable
 fun ShowCard(anime: Anime, onClick: () -> Unit) {
