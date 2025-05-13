@@ -23,11 +23,16 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
@@ -35,6 +40,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.example.anilibrary.api.anime.Anime
 import com.example.anilibrary.navigation.Screen
+import com.example.anilibrary.ui.components.ErrorMessageDialog
+import com.example.anilibrary.util.isInternetAvailable
 
 @Composable
 fun AnimeScreen(
@@ -45,6 +52,21 @@ fun AnimeScreen(
     val animeList = viewModel.animePagingData.collectAsLazyPagingItems()
 
     val isRefreshing = animeList.loadState.refresh is LoadState.Loading
+
+    var showNoInternetDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    if (showNoInternetDialog) {
+        ErrorMessageDialog(
+            title = "No Internet Connection",
+            message = "Please check your network and try again.",
+            onDismiss = {
+                showNoInternetDialog = false
+                animeList.retry()
+            }
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (!isRefreshing) {
@@ -66,9 +88,19 @@ fun AnimeScreen(
                 animeList.apply {
                     when {
                         loadState.refresh is LoadState.Error -> {
-                            val e = animeList.loadState.refresh as LoadState.Error
-                            item {
-                                Text("Error: ${e.error.message}")
+                            if (!isInternetAvailable(context)) {
+                                showNoInternetDialog = true
+                            } else {
+                                val e = animeList.loadState.refresh as LoadState.Error
+                                item {
+                                    ErrorMessageDialog(
+                                        title = "Error",
+                                        message = "Something went wrong, retry",
+                                        onDismiss = {
+                                            showNoInternetDialog = false
+                                            animeList.retry()
+                                        })
+                                }
                             }
                         }
                     }

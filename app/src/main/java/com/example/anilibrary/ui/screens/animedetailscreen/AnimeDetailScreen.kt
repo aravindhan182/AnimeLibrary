@@ -29,6 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +44,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.anilibrary.api.animedetails.Genres
+import com.example.anilibrary.ui.components.ErrorMessageDialog
 import com.example.anilibrary.util.Result
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -58,6 +62,22 @@ fun AnimeDetailsScreen(
     }
     val result by viewModel.animeDetails.observeAsState()
     val hasLoading = viewModel.loading.observeAsState().value ?: false
+    val hasNoInternet = viewModel.noInternet.observeAsState().value ?: false
+    var showNoInternetDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(hasNoInternet) {
+        showNoInternetDialog = hasNoInternet
+    }
+    if (showNoInternetDialog) {
+        ErrorMessageDialog(
+            title = "No Internet Connection",
+            message = "Please check your network and try again.",
+            onDismiss = {
+                showNoInternetDialog = false
+                viewModel.getAnimalDetails(animeId)
+            }
+        )
+    }
     if (hasLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -85,12 +105,17 @@ fun AnimeDetailsScreen(
 
         is Result.Error -> {
             val message = (result as Result.Error).message
-            Text(text = message ?: "An error occurred", color = Color.Red)
+            ErrorMessageDialog(
+                title = "Somethings went wrong",
+                message = "${message}, Please retry.",
+                onDismiss = {
+                    showNoInternetDialog = false
+                    viewModel.getAnimalDetails(animeId)
+                }
+            )
         }
 
-        null -> {
-            Text("No data yet")
-        }
+        else -> {}
     }
 }
 

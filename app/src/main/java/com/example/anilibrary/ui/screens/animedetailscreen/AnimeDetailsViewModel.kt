@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.anilibrary.api.animedetails.AnimeDetailsRepository
 import com.example.anilibrary.api.animedetails.AnimeResponse
 import com.example.anilibrary.util.Result
+import com.example.anilibrary.util.isInternetAvailable
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -20,14 +21,18 @@ class AnimeDetailsViewModel(application: Application) : AndroidViewModel(applica
     private val _loading: MutableLiveData<Boolean> = MutableLiveData()
     val loading: LiveData<Boolean> = _loading
 
-    fun getAnimalDetails(animeId: Int) {
-        _loading.value = true
-        Log.d("AnimeDetailsScreen", "Data: $animeId")
+    private val _noInternet: MutableLiveData<Boolean> = MutableLiveData()
+    val noInternet: LiveData<Boolean> = _noInternet
 
-        viewModelScope.launch {
-            Log.d("AnimeDetailsScreen", "Data: ${animeDetailsRepository.getAnimeDetails(animeId)}")
-            animeDetails.value =
-                handleListDataResponse(animeDetailsRepository.getAnimeDetails(animeId))
+    fun getAnimalDetails(animeId: Int) {
+        if (isInternetAvailable(getApplication())) {
+            _loading.value = true
+            viewModelScope.launch {
+                animeDetails.value =
+                    handleListDataResponse(animeDetailsRepository.getAnimeDetails(animeId))
+            }
+        } else {
+            _noInternet.value = true
         }
     }
 
